@@ -12,6 +12,31 @@ services:
       - db_master_password
     ports:
       - 5432:5432 # Expose for development
+  msg_broker:
+    image: rabbitmq
+    deploy:
+      replicas: 1
+      restart_policy:
+        max_attempts: 1
+    ports:
+      - 5672:5672
+  watermark:
+    image: stack-watermark
+    environment:
+      DB_HOST: db
+      MSG_BROKER_HOST: msg_broker
+    depends_on:
+      - db
+      - task_queue
+      - msg_broker
+    deploy:
+      replicas: 1
+      restart_policy:
+        max_attempts: 1
+    secrets:
+      - writer_password
+    ports:
+      - 8000:8000
 secrets:
   writer_password:
     external: true
