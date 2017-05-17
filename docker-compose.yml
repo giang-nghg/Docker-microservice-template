@@ -1,0 +1,21 @@
+version: "3.1"
+services:
+  db:
+    image: stack-db
+    deploy:
+      replicas: 1
+      restart_policy:
+        max_attempts: 1
+    secrets:
+      - writer_password
+      - reader_password
+      - db_master_password
+    ports:
+      - 5432:5432 # Expose for development
+secrets:
+  writer_password:
+    external: true
+  reader_password:
+    external: true
+  db_master_password:
+    external: true
